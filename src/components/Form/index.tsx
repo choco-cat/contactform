@@ -11,12 +11,19 @@ const UserForm: React.FC = () => {
     birth: "",
     message: "",
   });
+
   const handleSubmit = () => {
     return;
   };
+
   const transformName = (e: ChangeEvent<HTMLInputElement>) => {
     setUserName(e.target.value.toUpperCase());
+    // TODO: set cursor position after setUserName - use ref?
+    if (errors.name) {
+      validationName(e);
+    }
   };
+
   const validationName = (e: ChangeEvent<HTMLInputElement>) => {
     setError({
       ...errors,
@@ -24,6 +31,12 @@ const UserForm: React.FC = () => {
         ? "The field must contain two words from 3 to 30 letter characters long!"
         : "",
     });
+  };
+
+  const changeEmail = (e: ChangeEvent<HTMLInputElement>) => {
+    if (errors.email) {
+      validationEmail(e);
+    }
   };
 
   const validationEmail = (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +52,9 @@ const UserForm: React.FC = () => {
 
   const transformPhone = (e: ChangeEvent<HTMLInputElement>) => {
     setUserPhone(e.target.value);
+    if (errors.phone) {
+      validationPhone(e);
+    }
   };
 
   const validationPhone = (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,8 +66,20 @@ const UserForm: React.FC = () => {
     });
   };
 
+  const changeBirth = (e: ChangeEvent<HTMLInputElement>) => {
+    if (errors.birth) {
+      validationBirth(e);
+    }
+  };
+
   const validationBirth = (e: ChangeEvent<HTMLInputElement>) => {
     setError({ ...errors, birth: !e.target.value.length ? "Wrong date!" : "" });
+  };
+
+  const changeMessage = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    if (errors.message) {
+      validationMessage(e);
+    }
   };
 
   const validationMessage = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -87,6 +115,7 @@ const UserForm: React.FC = () => {
           <input
             className={cl.form__input}
             type="text"
+            onChange={changeEmail}
             onBlur={validationEmail}
             required
             minLength={3}
@@ -113,6 +142,7 @@ const UserForm: React.FC = () => {
           <input
             className={cl.form__input}
             type="date"
+            onChange={changeBirth}
             onBlur={validationBirth}
             required
             minLength={3}
@@ -124,6 +154,7 @@ const UserForm: React.FC = () => {
           Message
           <textarea
             className={cl.form__input}
+            onChange={changeMessage}
             onBlur={validationMessage}
             required
             minLength={10}
@@ -133,6 +164,7 @@ const UserForm: React.FC = () => {
             <div className={cl.form__error}>{errors.message}</div>
           )}
         </label>
+        <input type="submit" value="Send" />
       </form>
     </>
   );

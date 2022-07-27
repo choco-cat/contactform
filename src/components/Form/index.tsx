@@ -4,11 +4,13 @@ import cl from "./form.module.scss";
 const UserForm: React.FC = () => {
   const [userName, setUserName] = useState("");
   const [userPhone, setUserPhone] = useState("+7");
-  const [errorName, setErrorName] = useState("");
-  const [errorEmail, setErrorEmail] = useState("");
-  const [errorPhone, setErrorPhone] = useState("");
-  const [errorBirth, setErrorBirth] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errors, setError] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    birth: "",
+    message: "",
+  });
   const handleSubmit = () => {
     return;
   };
@@ -16,19 +18,23 @@ const UserForm: React.FC = () => {
     setUserName(e.target.value.toUpperCase());
   };
   const validationName = (e: ChangeEvent<HTMLInputElement>) => {
-    setErrorName(
-      !/^[A-Za-z]{3,30} [A-Za-z]{3,30}$/.test(e.target.value as string)
+    setError({
+      ...errors,
+      name: !/^[A-Za-z]{3,30} [A-Za-z]{3,30}$/.test(e.target.value as string)
         ? "The field must contain two words from 3 to 30 letter characters long!"
-        : ""
-    );
+        : "",
+    });
   };
 
   const validationEmail = (e: ChangeEvent<HTMLInputElement>) => {
-    setErrorEmail(
-      !/^[\w]{1}[\w-\.]*@[\w-]+\.[a-z]{2,4}$/i.test(e.target.value as string)
+    setError({
+      ...errors,
+      email: !/^[\w]{1}[\w-\.]*@[\w-]+\.[a-z]{2,4}$/i.test(
+        e.target.value as string
+      )
         ? "Wrong email!"
-        : ""
-    );
+        : "",
+    });
   };
 
   const transformPhone = (e: ChangeEvent<HTMLInputElement>) => {
@@ -36,21 +42,26 @@ const UserForm: React.FC = () => {
   };
 
   const validationPhone = (e: ChangeEvent<HTMLInputElement>) => {
-    setErrorPhone(
-      !/^\+7[\d]{10}$/.test(e.target.value as string) ? "Wrong phone!" : ""
-    );
+    setError({
+      ...errors,
+      phone: !/^\+7[\d]{10}$/.test(e.target.value as string)
+        ? "Wrong phone!"
+        : "",
+    });
   };
 
   const validationBirth = (e: ChangeEvent<HTMLInputElement>) => {
-    setErrorBirth(!e.target.value.length ? "Wrong date!" : "");
+    setError({ ...errors, birth: !e.target.value.length ? "Wrong date!" : "" });
   };
 
   const validationMessage = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setErrorMessage(
-      e.target.value.length < 3 || e.target.value.length > 300
-        ? "message length must be greater than 3 and less than 300!"
-        : ""
-    );
+    setError({
+      ...errors,
+      message:
+        e.target.value.length < 3 || e.target.value.length > 300
+          ? "message length must be greater than 3 and less than 300!"
+          : "",
+    });
   };
 
   return (
@@ -68,7 +79,7 @@ const UserForm: React.FC = () => {
             minLength={3}
             maxLength={35}
           />
-          {errorName && <div className={cl.form__error}>{errorName}</div>}
+          {errors.name && <div className={cl.form__error}>{errors.name}</div>}
         </label>
 
         <label className={cl.form__label}>
@@ -81,7 +92,7 @@ const UserForm: React.FC = () => {
             minLength={3}
             maxLength={35}
           />
-          {errorEmail && <div className={cl.form__error}>{errorEmail}</div>}
+          {errors.email && <div className={cl.form__error}>{errors.email}</div>}
         </label>
         <label className={cl.form__label}>
           Phone
@@ -95,7 +106,7 @@ const UserForm: React.FC = () => {
             minLength={12}
             maxLength={12}
           />
-          {errorPhone && <div className={cl.form__error}>{errorPhone}</div>}
+          {errors.phone && <div className={cl.form__error}>{errors.phone}</div>}
         </label>
         <label className={cl.form__label}>
           Birthday
@@ -107,7 +118,7 @@ const UserForm: React.FC = () => {
             minLength={3}
             maxLength={15}
           />
-          {errorBirth && <div className={cl.form__error}>{errorBirth}</div>}
+          {errors.birth && <div className={cl.form__error}>{errors.birth}</div>}
         </label>
         <label className={cl.form__label}>
           Message
@@ -118,7 +129,9 @@ const UserForm: React.FC = () => {
             minLength={10}
             maxLength={300}
           />
-          {errorMessage && <div className={cl.form__error}>{errorMessage}</div>}
+          {errors.message && (
+            <div className={cl.form__error}>{errors.message}</div>
+          )}
         </label>
       </form>
     </>

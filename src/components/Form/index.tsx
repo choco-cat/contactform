@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useState, ChangeEvent } from "react";
 import cl from "./form.module.scss";
 
-const UserForm: React.FC = (props) => {
+const UserForm: React.FC = () => {
+  const [userName, setUserName] = useState("");
+  const [errorName, setErrorName] = useState("");
   const handleSubmit = () => {
     return;
   };
-  const validationInput = () => {
-    return;
+  const transformName = (e: ChangeEvent<HTMLInputElement>) => {
+    setUserName(e.target.value.toUpperCase());
+  };
+  const validationName = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!/^[A-Za-z]{3,30} [A-Za-z]{3,30}$/.test(e.target.value as string)) {
+      setErrorName(
+        "The field must contain two words from 3 to 30 letter characters long!"
+      );
+    } else {
+      setErrorName("");
+    }
+  };
+  const validationMessage = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    console.log(e.target.value);
   };
 
   return (
@@ -17,17 +31,21 @@ const UserForm: React.FC = (props) => {
           <input
             className={cl.form__input}
             type="text"
+            value={userName}
+            onChange={transformName}
+            onBlur={validationName}
             required
             minLength={3}
             maxLength={35}
           />
+          {errorName && <div className={cl.form__error}>{errorName}</div>}
         </label>
+
         <label className={cl.form__label}>
           Email
           <input
             className={cl.form__input}
             type="text"
-            onChange={() => validationInput}
             required
             minLength={3}
             maxLength={35}
@@ -38,7 +56,6 @@ const UserForm: React.FC = (props) => {
           <input
             className={cl.form__input}
             type="text"
-            onChange={() => validationInput}
             required
             minLength={3}
             maxLength={15}
@@ -49,7 +66,6 @@ const UserForm: React.FC = (props) => {
           <input
             className={cl.form__input}
             type="date"
-            onChange={() => validationInput}
             required
             minLength={3}
             maxLength={15}
@@ -59,7 +75,7 @@ const UserForm: React.FC = (props) => {
           Message
           <textarea
             className={cl.form__input}
-            onChange={() => validationInput}
+            onChange={validationMessage}
             required
             minLength={3}
             maxLength={300}

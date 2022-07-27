@@ -12,8 +12,11 @@ const UserForm: React.FC = () => {
     message: "",
   });
 
-  const handleSubmit = () => {
-    return;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    return !Object.values(errors).find((value) => value !== "");
+    // TODO: run validation for all inputs - use refs?
+    // TODO: send ajax request to server
   };
 
   const transformName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +89,7 @@ const UserForm: React.FC = () => {
     setError({
       ...errors,
       message:
-        e.target.value.length < 3 || e.target.value.length > 300
+        e.target.value.length < 10 || e.target.value.length > 300
           ? "message length must be greater than 3 and less than 300!"
           : "",
     });

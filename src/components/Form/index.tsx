@@ -1,5 +1,12 @@
 import React, { useState, ChangeEvent } from "react";
-import { validationField } from "../../services/validation";
+import {
+  validationForName,
+  validationForEmail,
+  validationForPhone,
+  validationForBirthday,
+  validationForMessage,
+  validationAllFields,
+} from "../../services/validation";
 import cl from "./form.module.scss";
 import { FieldData } from "../../types/User";
 import { sendContact } from "../../api/contact.api";
@@ -20,40 +27,46 @@ const ContactForm: React.FC = () => {
   const [user, setUser] = useState(initialStateForForm);
   const [statusMessage, setStatusMessage] = useState("");
   const { name, email, phone, birthday, message } = user;
+  const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async () => {
-    // Validate all fields
-    handleChangeName(name.value);
-    handleChangeEmail(email.value);
-    handleChangePhone(phone.value);
-    handleChangeBirthday(birthday.value);
-    handleChangeMessage(message.value);
-    const response = await sendContact(user);
-    setStatusMessage(response.message);
-    // if errors = 0, send request
+    setStatusMessage("");
+    setUser(validationAllFields(user));
+    if (
+      user.name.error === "" &&
+      user.email.error === "" &&
+      user.phone.error === "" &&
+      user.birthday.error === "" &&
+      user.message.error === ""
+    ) {
+      setIsLoading(true);
+      const response = await sendContact(user);
+      setIsLoading(false);
+      setStatusMessage(response.message);
+    }
   };
 
   const handleChangeName = (value: string) => {
-    const error = validationField("name", value);
+    const error = validationForName(value);
     setUser({ ...user, name: { value: value.toUpperCase(), error } });
   };
 
   const handleChangeEmail = (value: string) => {
-    const error = validationField("email", value);
+    const error = validationForEmail(value);
     setUser({ ...user, email: { value, error } });
   };
 
   const handleChangePhone = (value: string) => {
-    const error = validationField("phone", value);
+    const error = validationForPhone(value);
     setUser({ ...user, phone: { value, error } });
   };
 
   const handleChangeBirthday = (value: string) => {
-    const error = validationField("birthday", value);
+    const error = validationForBirthday(value);
     setUser({ ...user, birthday: { value, error } });
   };
 
   const handleChangeMessage = (value: string) => {
-    const error = validationField("message", value);
+    const error = validationForMessage(value);
     setUser({ ...user, message: { value, error } });
   };
 
@@ -65,11 +78,10 @@ const ContactForm: React.FC = () => {
           <input
             className={cl.form__input}
             type="text"
+            value={name.value}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleChangeName(e.target.value)
             }
-            maxLength={LENGTH_NAME}
-            value={name.value}
           />
           {name.error && <div className={cl.form__error}>{name.error}</div>}
         </label>
@@ -131,8 +143,13 @@ const ContactForm: React.FC = () => {
             <div className={cl.form__error}>{message.error}</div>
           )}
         </label>
-        <input type="button" value="Send" onClick={handleSubmit} />
-        {statusMessage}
+        <input
+          type="button"
+          value="Send"
+          disabled={isLoading}
+          onClick={handleSubmit}
+        />
+        <div className={cl.form__message}>{statusMessage}</div>
       </form>
     </>
   );

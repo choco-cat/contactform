@@ -45,7 +45,7 @@ const ContactForm: React.FC = () => {
       const response = await sendContact(user);
       setIsLoading(false);
       setStatusMessage(response.message);
-      if (!response.error) {
+      if (response.result !== "error") {
         setUser(initialStateForForm);
       }
     }

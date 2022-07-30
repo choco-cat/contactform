@@ -1,3 +1,3 @@
 export default {
-  baseUrl: process.env.REACT_APP_API_URL || "",
+  baseUrl: "https://contact-server33.herokuapp.com/",
 };

@@ -3,7 +3,7 @@ import { User } from "../types/User";
 
 export interface ResponseData {
   message: string;
-  error: string;
+  result: string;
 }
 
 export const sendContact = async (userdata: User) => {
@@ -15,10 +15,7 @@ export const sendContact = async (userdata: User) => {
     message: userdata.message.value,
   };
   try {
-    const response = await request.post(
-      "http://localhost:4000/contact",
-      fieldsData
-    );
+    const response = await request.post("contact", fieldsData);
     return response.data as ResponseData;
   } catch (error) {
     return error as ResponseData;

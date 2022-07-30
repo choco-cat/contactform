@@ -13,9 +13,9 @@ instance.interceptors.request.use(
 );
 
 instance.interceptors.response.use(undefined, (error) => {
-  console.log(error);
   return Promise.reject({
     message: `${error.response.data.message} - ${error.message}`,
+    error: 1,
   });
 });
 

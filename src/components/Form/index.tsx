@@ -1,15 +1,13 @@
 import React, { useState, ChangeEvent } from "react";
 import { validationField } from "../../services/validation";
 import cl from "./form.module.scss";
+import { FieldData } from "../../types/User";
+import { sendContact } from "../../api/contact.api";
 
 const LENGTH_PHONE = 12;
 const LENGTH_NAME = 61;
 const LENGTH_MESSAGE = 300;
 
-interface FieldData {
-  value: string;
-  error: string;
-}
 const initialStateForForm = {
   name: { value: "" } as FieldData,
   email: { value: "" } as FieldData,
@@ -20,14 +18,17 @@ const initialStateForForm = {
 
 const ContactForm: React.FC = () => {
   const [user, setUser] = useState(initialStateForForm);
+  const [statusMessage, setStatusMessage] = useState("");
   const { name, email, phone, birthday, message } = user;
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate all fields
     handleChangeName(name.value);
     handleChangeEmail(email.value);
     handleChangePhone(phone.value);
     handleChangeBirthday(birthday.value);
     handleChangeMessage(message.value);
+    const response = await sendContact(user);
+    setStatusMessage(response.message);
     // if errors = 0, send request
   };
 
@@ -108,6 +109,7 @@ const ContactForm: React.FC = () => {
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleChangeBirthday(e.target.value)
             }
+            value={birthday.value}
             minLength={3}
             maxLength={15}
           />
@@ -122,6 +124,7 @@ const ContactForm: React.FC = () => {
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
               handleChangeMessage(e.target.value)
             }
+            value={message.value}
             maxLength={LENGTH_MESSAGE}
           />
           {message.error && (
@@ -129,6 +132,7 @@ const ContactForm: React.FC = () => {
           )}
         </label>
         <input type="button" value="Send" onClick={handleSubmit} />
+        {statusMessage}
       </form>
     </>
   );

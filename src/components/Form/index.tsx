@@ -29,6 +29,9 @@ const ContactForm: React.FC = () => {
   const { name, email, phone, birthday, message } = user;
   const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async () => {
+    if (isLoading) {
+      return;
+    }
     setStatusMessage("");
     setUser(validationAllFields(user));
     if (
@@ -146,6 +149,7 @@ const ContactForm: React.FC = () => {
         <input
           type="button"
           value="Send"
+          className={cl.form__button}
           disabled={isLoading}
           onClick={handleSubmit}
         />

@@ -31,8 +31,26 @@
 
   &__message {
     background: green;
-    padding: 1em;
+    line-height: 3.2em;
     text-align: center;
     color: #ffffff;
+  }
+
+  &__button {
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    padding: 1em;
+    position: relative;
+    color: #585858;
+    border: 1px solid rgb(138 138 138);
+    background: #cccccc;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 6em;
+
+    &:hover {
+      background: #aaaaaa;
+    }
   }
 }

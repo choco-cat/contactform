@@ -13,7 +13,7 @@ export const validationForEmail = (value: string) => {
 };
 
 export const validationForPhone = (value: string) => {
-  return !/^\+7[\d]{10}$/.test(value as string) ? "Phone is incorrect!" : "";
+  return !/^7[\d]{10}$/.test(value as string) ? "Phone is incorrect!" : "";
 };
 
 export const validationForBirthday = (value: string) => {

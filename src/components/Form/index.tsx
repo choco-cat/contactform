@@ -11,7 +11,7 @@ import cl from "./form.module.scss";
 import { FieldData } from "../../types/User";
 import { sendContact } from "../../api/contact.api";
 
-const LENGTH_PHONE = 12;
+const LENGTH_PHONE = 11;
 const LENGTH_NAME = 61;
 const LENGTH_MESSAGE = 300;
 
@@ -62,6 +62,10 @@ const ContactForm: React.FC = () => {
   };
 
   const handleChangePhone = (value: string) => {
+    if (value[0] !== "7") {
+      value = "7" + value;
+    }
+    value = value.replace(/([^\d]*)/g, "");
     const error = validationForPhone(value);
     setUser({ ...user, phone: { value, error } });
   };
@@ -109,7 +113,7 @@ const ContactForm: React.FC = () => {
           <input
             className={cl.form__input}
             type="text"
-            placeholder="+7__________"
+            placeholder="7__________"
             value={phone.value}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleChangePhone(e.target.value)

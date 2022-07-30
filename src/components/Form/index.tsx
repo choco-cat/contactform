@@ -1,139 +1,89 @@
 import React, { useState, ChangeEvent } from "react";
+import { validationField } from "../../services/validation";
 import cl from "./form.module.scss";
 
-interface IFormData {
+const LENGTH_PHONE = 12;
+const LENGTH_NAME = 61;
+const LENGTH_MESSAGE = 300;
+
+interface FieldData {
   value: string;
   error: string;
 }
+const initialStateForForm = {
+  name: { value: "" } as FieldData,
+  email: { value: "" } as FieldData,
+  phone: { value: "" } as FieldData,
+  birthday: { value: "" } as FieldData,
+  message: { value: "" } as FieldData,
+};
 
-const UserForm: React.FC = () => {
-  const [userName, setUserName] = useState({} as IFormData);
-  const [userEmail, setUserEmail] = useState({} as IFormData);
-  const [userPhone, setUserPhone] = useState({} as IFormData);
-  const [userBirth, setUserBirth] = useState({} as IFormData);
-  const [userMessage, setUserMessage] = useState({} as IFormData);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    validationName(userName.value);
-    validationEmail(userEmail.value);
-    validationPhone(userPhone.value);
-    validationBirth(userBirth.value);
-    validationMessage(userMessage.value);
-    // TODO: calc all errors. if 0, then send ajax request to server
+const ContactForm: React.FC = () => {
+  const [user, setUser] = useState(initialStateForForm);
+  const { name, email, phone, birthday, message } = user;
+  const handleSubmit = () => {
+    // Validate all fields
+    handleChangeName(name.value);
+    handleChangeEmail(email.value);
+    handleChangePhone(phone.value);
+    handleChangeBirthday(birthday.value);
+    handleChangeMessage(message.value);
+    // if errors = 0, send request
   };
 
-  const transformName = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserName({ ...userName, value: e.target.value.toUpperCase() });
-    // TODO: set cursor position after setUserName - use ref?
-    if (userName.error) {
-      validationName(e.target.value);
-    }
+  const handleChangeName = (value: string) => {
+    const error = validationField("name", value);
+    setUser({ ...user, name: { value: value.toUpperCase(), error } });
   };
 
-  const validationName = (value: string) => {
-    setUserName({
-      ...userName,
-      error: !/^[A-Za-z]{3,30} [A-Za-z]{3,30}$/.test(value as string)
-        ? "The field must contain two words from 3 to 30 letter characters long!"
-        : "",
-    });
+  const handleChangeEmail = (value: string) => {
+    const error = validationField("email", value);
+    setUser({ ...user, email: { value, error } });
   };
 
-  const changeEmail = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserEmail({ ...userEmail, value: e.target.value });
-    if (userEmail.error) {
-      validationEmail(e.target.value);
-    }
+  const handleChangePhone = (value: string) => {
+    const error = validationField("phone", value);
+    setUser({ ...user, phone: { value, error } });
   };
 
-  const validationEmail = (value: string) => {
-    setUserEmail({
-      ...userEmail,
-      error: !/^[\w]{1}[\w-\.]*@[\w-]+\.[a-z]{2,4}$/i.test(value as string)
-        ? "Wrong email!"
-        : "",
-    });
+  const handleChangeBirthday = (value: string) => {
+    const error = validationField("birthday", value);
+    setUser({ ...user, birthday: { value, error } });
   };
 
-  const transformPhone = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserPhone({ ...userPhone, value: e.target.value });
-    if (userPhone.error) {
-      validationPhone(e.target.value);
-    }
-  };
-
-  const validationPhone = (value: string) => {
-    setUserPhone({
-      ...userPhone,
-      error: !/^\+7[\d]{10}$/.test(value as string) ? "Wrong phone!" : "",
-    });
-  };
-
-  const changeBirth = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserBirth({ ...userBirth, value: e.target.value });
-    if (userBirth.error) {
-      validationBirth(e.target.value);
-    }
-  };
-
-  const validationBirth = (value: string) => {
-    setUserBirth({ ...userBirth, error: !value.length ? "Wrong date!" : "" });
-  };
-
-  const changeMessage = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setUserMessage({ ...userMessage, value: e.target.value });
-    if (userMessage.error) {
-      validationMessage(e.target.value);
-    }
-  };
-
-  const validationMessage = (value: string) => {
-    setUserMessage({
-      ...userMessage,
-      error:
-        value.length < 10 || value.length > 300
-          ? "message length must be greater than 3 and less than 300!"
-          : "",
-    });
+  const handleChangeMessage = (value: string) => {
+    const error = validationField("message", value);
+    setUser({ ...user, message: { value, error } });
   };
 
   return (
     <>
-      <form onSubmit={handleSubmit} className={cl.form}>
+      <form className={cl.form}>
         <label className={cl.form__label}>
           Your Name
           <input
             className={cl.form__input}
             type="text"
-            value={userName.value}
-            onChange={transformName}
-            onBlur={(e: ChangeEvent<HTMLInputElement>) =>
-              validationName(e.target.value)
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleChangeName(e.target.value)
             }
-            minLength={3}
-            maxLength={35}
+            maxLength={LENGTH_NAME}
+            value={name.value}
           />
-          {userName.error && (
-            <div className={cl.form__error}>{userName.error}</div>
-          )}
+          {name.error && <div className={cl.form__error}>{name.error}</div>}
         </label>
-
         <label className={cl.form__label}>
           Email
           <input
             className={cl.form__input}
             type="text"
-            onChange={changeEmail}
-            onBlur={(e: ChangeEvent<HTMLInputElement>) =>
-              validationEmail(e.target.value)
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleChangeEmail(e.target.value)
             }
-            minLength={3}
-            maxLength={35}
+            value={email.value}
+            maxLength={LENGTH_NAME}
           />
-          {userEmail.error && (
-            <div className={cl.form__error}>{userEmail.error}</div>
-          )}
+          {email.error && <div className={cl.form__error}>{email.error}</div>}
         </label>
         <label className={cl.form__label}>
           Phone
@@ -141,53 +91,47 @@ const UserForm: React.FC = () => {
             className={cl.form__input}
             type="text"
             placeholder="+7__________"
-            value={userPhone.value}
-            onChange={transformPhone}
-            onBlur={(e: ChangeEvent<HTMLInputElement>) =>
-              validationPhone(e.target.value)
+            value={phone.value}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleChangePhone(e.target.value)
             }
-            minLength={12}
-            maxLength={12}
+            minLength={LENGTH_PHONE}
+            maxLength={LENGTH_PHONE}
           />
-          {userPhone.error && (
-            <div className={cl.form__error}>{userPhone.error}</div>
-          )}
+          {phone.error && <div className={cl.form__error}>{phone.error}</div>}
         </label>
         <label className={cl.form__label}>
           Birthday
           <input
             className={cl.form__input}
             type="date"
-            onChange={changeBirth}
-            onBlur={(e: ChangeEvent<HTMLInputElement>) =>
-              validationBirth(e.target.value)
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleChangeBirthday(e.target.value)
             }
             minLength={3}
             maxLength={15}
           />
-          {userBirth.error && (
-            <div className={cl.form__error}>{userBirth.error}</div>
+          {birthday.error && (
+            <div className={cl.form__error}>{birthday.error}</div>
           )}
         </label>
         <label className={cl.form__label}>
           Message
           <textarea
             className={cl.form__input}
-            onChange={changeMessage}
-            onBlur={(e: ChangeEvent<HTMLTextAreaElement>) =>
-              validationMessage(e.target.value)
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              handleChangeMessage(e.target.value)
             }
-            minLength={10}
-            maxLength={300}
+            maxLength={LENGTH_MESSAGE}
           />
-          {userMessage.error && (
-            <div className={cl.form__error}>{userMessage.error}</div>
+          {message.error && (
+            <div className={cl.form__error}>{message.error}</div>
           )}
         </label>
-        <input type="submit" value="Send" />
+        <input type="button" value="Send" onClick={handleSubmit} />
       </form>
     </>
   );
 };
 
-export default UserForm;
+export default ContactForm;

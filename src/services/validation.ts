@@ -22,7 +22,7 @@ export const validationForBirthday = (value: string) => {
 
 export const validationForMessage = (value: string) => {
   return (value && (value.length < 10 || value.length > 300)) || !value
-    ? "Message length must be greater than 3 and less than 300!"
+    ? "Message length must be greater than 10 and less than 300!"
     : "";
 };
 

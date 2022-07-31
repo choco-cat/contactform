@@ -1,4 +1,4 @@
-import { User } from "../types/User";
+import { User } from "../types/user";
 
 export const validationForName = (value: string) => {
   return !/^[A-Za-z]{3,30} [A-Za-z]{3,30}$/.test(value)
@@ -17,37 +17,58 @@ export const validationForPhone = (value: string) => {
 };
 
 export const validationForBirthday = (value: string) => {
-  return !value ? "Wrong date!" : "";
+  return !value ? "Date is incorrect!" : "";
 };
 
 export const validationForMessage = (value: string) => {
   return (value && (value.length < 10 || value.length > 300)) || !value
-    ? "message length must be greater than 3 and less than 300!"
+    ? "Message length must be greater than 3 and less than 300!"
     : "";
 };
 
-export const validationAllFields = (user: User) => {
-  const newUser = { ...user };
-  const { name, email, phone, birthday, message } = newUser;
-  newUser.name = {
-    ...name,
-    error: validationForName(newUser.name.value),
+export const validationAllFields = ({
+  name,
+  email,
+  phone,
+  birthday,
+  message,
+}: User) => {
+  return {
+    name: {
+      value: name.value,
+      error: validationForName(name.value),
+    },
+    email: {
+      value: email.value,
+      error: validationForEmail(email.value),
+    },
+    phone: {
+      value: phone.value,
+      error: validationForPhone(phone.value),
+    },
+    birthday: {
+      value: birthday.value,
+      error: validationForBirthday(birthday.value),
+    },
+    message: {
+      value: message.value,
+      error: validationForMessage(message.value),
+    },
   };
-  newUser.email = {
-    ...email,
-    error: validationForEmail(newUser.email.value),
-  };
-  newUser.phone = {
-    ...phone,
-    error: validationForPhone(newUser.phone.value),
-  };
-  newUser.birthday = {
-    ...birthday,
-    error: validationForBirthday(newUser.birthday.value),
-  };
-  newUser.message = {
-    ...message,
-    error: validationForMessage(newUser.message.value),
-  };
-  return newUser;
+};
+
+export const hasValidationErrors = ({
+  name,
+  email,
+  phone,
+  birthday,
+  message,
+}: User) => {
+  return (
+    name.error !== "" ||
+    email.error !== "" ||
+    phone.error !== "" ||
+    birthday.error !== "" ||
+    message.error !== ""
+  );
 };

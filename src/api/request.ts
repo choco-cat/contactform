@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "../config/app";
+import config from "../config";
 
 const instance = axios.create({
   baseURL: config.baseUrl,
@@ -12,11 +12,10 @@ instance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-instance.interceptors.response.use(undefined, (error) => {
-  console.log(error);
-  return Promise.reject({
+instance.interceptors.response.use(undefined, (error) =>
+  Promise.reject({
     message: `${error.response.data.message} - ${error.message}`,
-  });
-});
+  })
+);
 
 export default instance;

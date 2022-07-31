@@ -1,19 +1,26 @@
 import request from "./request";
-import { User } from "../types/User";
+import { User } from "../types/user";
 
 export interface ResponseData {
   message: string;
   result: string;
 }
 
-export const sendContact = async (userdata: User) => {
+export const sendContact = async ({
+  name,
+  email,
+  phone,
+  birthday,
+  message,
+}: User) => {
   const fieldsData = {
-    name: userdata.name.value,
-    email: userdata.email.value,
-    phone: userdata.phone.value,
-    birthday: userdata.birthday.value,
-    message: userdata.message.value,
+    name: name.value,
+    email: email.value,
+    phone: phone.value,
+    birthday: birthday.value,
+    message: message.value,
   };
+
   try {
     const response = await request.post("contact", fieldsData);
     return response.data as ResponseData;
